@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraction Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f7f4ef;--surface:#fff;--border:#d6cfc4;--text:#2b2520;--muted:#7a6f66;
+  --accent:#b5651d;--accent-light:#e8d5c0;
+  --colA:#c8884a;--colB:#4a7fa5;--colR:#7a6f66;
+  --green:#3a7d44;--green-light:#d0ebd4;--red:#a33030;--red-light:#f0d0d0;
+  --radius:6px;--font:'Atkinson Hyperlegible',sans-serif;--mono:'JetBrains Mono',monospace;
+  --cell:22px;
+}
+html,body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;width:100%;padding:0;}
+.widget{width:100%;padding:8px 12px 10px;}
+.header{display:flex;align-items:baseline;gap:10px;margin-bottom:7px;border-bottom:2px solid var(--accent);padding-bottom:5px;}
+.header h1{font-size:.9rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;}
+.header .sub{font-size:.75rem;color:var(--muted);}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;margin-bottom:7px;}
+.qlabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
+.qtext{
+  font-size:1.8rem;
+  margin-bottom:5px;
+}
+
+.qtext math{
+  font-size:1em;
+}
+.fmt{font-size:.72rem;color:var(--muted);background:var(--accent-light);border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:6px;}
+.arow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.ainput{font-family:var(--mono);font-size:.95rem;border:2px solid var(--border);border-radius:var(--radius);padding:4px 9px;width:130px;background:var(--bg);color:var(--text);outline:none;transition:border-color .15s;}
+.ainput:focus{border-color:var(--accent);}
+.ainput.correct{border-color:var(--green);background:var(--green-light);}
+.ainput.incorrect{border-color:var(--red);background:var(--red-light);}
+.btn{font-family:var(--font);font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:var(--radius);border:none;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.02em;}
+.btn:hover{opacity:.85;}.btn:active{transform:scale(.97);}.btn:disabled{opacity:.5;cursor:default;}
+.btn-submit{background:var(--text);color:#fff;}
+.btn-hint{background:var(--accent-light);color:var(--accent);}
+.btn-next{background:var(--green);color:#fff;display:none;}
+.fb{font-size:.8rem;font-weight:700;min-height:1.1em;padding:2px 0;}
+.fb.ok{color:var(--green);}.fb.err{color:var(--red);}
+.hint-area{background:#fdf8f2;border:1px solid var(--accent-light);border-radius:var(--radius);padding:8px 12px;margin-bottom:7px;display:none;}
+.hint-area.on{display:block;}
+.hslabel{font-size:.67rem;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:700;margin-bottom:4px;}
+.vis-table{margin-top:4px;overflow-x:auto;}
+.vis-title{font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+.vis-row{display:flex;align-items:center;gap:4px;margin-bottom:4px;flex-wrap:wrap;}
+.vis-row-label{font-size:.72rem;font-weight:700;min-width:60px;color:var(--muted);}
+.vis-wholes{display:flex;gap:4px;align-items:center;flex-wrap:wrap;}
+.vis-whole{display:inline-grid;gap:1px;border:2px solid #999;padding:1px;border-radius:3px;background:#999;}
+.vis-cell{width:var(--cell);height:var(--cell);border-radius:1px;}
+.vis-cell.empty{background:#fff;}
+.vis-cell.colA{background:var(--colA);}
+.vis-cell.colB{background:var(--colB);}
+.vis-cell.colR{background:var(--colR);}
+.vis-legend{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);}
+.legend-swatch{width:12px;height:12px;border-radius:2px;border:1px solid rgba(0,0,0,.15);}
+.vis-caption{font-size:.74rem;color:var(--muted);margin-top:4px;font-style:italic;}
+.fraction-input{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.fraction-box{
+  width:3em;
+  padding:4px;
+
+  text-align:center;
+
+  font-family:var(--mono);
+  font-size:1rem;
+
+  border:2px solid var(--border);
+  border-radius:4px;
+
+  background:var(--bg);
+  color:var(--text);
+
+  outline:none;
+}
+
+.fraction-box:focus{
+  border-color:var(--accent);
+}
+
+.fraction-bar{
+  width:3em;
+  border-top:2px solid var(--text);
+  margin:3px 0;
+}
+
+.fraction-box.correct{
+  border-color:var(--green);
+  background:var(--green-light);
+}
+
+.fraction-box.incorrect{
+  border-color:var(--red);
+  background:var(--red-light);
+}
+</style>
+</head>
+<body>
+<div class="widget">
+  <div class="header">
+    <h1>Fraction Practice</h1>
+    <span class="sub">Mixed Numbers → Improper Fractions</span>
+  </div>
+  <div class="qcard">
+    <div class="qlabel">Convert to an improper fraction</div>
+    <div class="qtext" id="qtext">—</div>
+    <div class="fmt">Enter the improper fraction.</strong></div>
+    <div class="arow">
+
+  <div class="fraction-input">
+    <input
+      class="fraction-box"
+      id="numInput"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off">
+
+    <div class="fraction-bar"></div>
+
+    <input
+      class="fraction-box"
+      id="denInput"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off">
+  </div>
+
+  <button class="btn btn-submit" id="bsub">Submit</button>
+  <button class="btn btn-hint" id="bhint">Hint</button>
+  <button class="btn btn-next" id="bnext">Next Question →</button>
+
+</div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="hint-area" id="harea"></div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   maxDenominator : max 9
+   maxWhole       : max 3
+============================================================ */
+const CFG = { maxDenominator: 9, maxWhole: 3 };
+/* ============================================================ */
+
+function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function genQ(){
+  const den = ri(2, CFG.maxDenominator);
+  const whole = ri(1, CFG.maxWhole);
+  const num = ri(1, den-1);
+  const impNum = whole*den + num;
+  return { whole, num, den, impNum };
+}
+
+// Only accept improper fraction format: digits/digits
+function parseAns(s){
+  s = s.trim();
+  if(/^\d+\/\d+$/.test(s)){
+    const [n,d] = s.split('/').map(Number);
+    if(d===0) return null;
+    return { n, d };
+  }
+  return null;
+}
+
+// Accept any equivalent improper fraction: n/d == impNum/den
+function matchAns(p, q){
+  if(!p) return false;
+  // cross-multiply: p.n * q.den === q.impNum * p.d
+  return p.n * q.den === q.impNum * p.d;
+}
+
+// Visual builders
+function makeWhole(cols, cls){
+  const g = document.createElement('div');
+  g.className = 'vis-whole';
+  g.style.gridTemplateColumns = `repeat(${cols},var(--cell))`;
+  for(let i=0;i<cols;i++){
+    const c = document.createElement('div');
+    c.className = `vis-cell ${cls}`;
+    g.appendChild(c);
+  }
+  return g;
+}
+
+function makeFrac(cols, filled, cls){
+  const g = document.createElement('div');
+  g.className = 'vis-whole';
+  g.style.gridTemplateColumns = `repeat(${cols},var(--cell))`;
+  for(let i=0;i<cols;i++){
+    const c = document.createElement('div');
+    c.className = `vis-cell ${i<filled ? cls : 'empty'}`;
+    g.appendChild(c);
+  }
+  return g;
+}
+
+function makeLeg(...items){
+  const l = document.createElement('div'); l.className='vis-legend';
+  items.forEach(([color,text])=>{
+    const item=document.createElement('div'); item.className='legend-item';
+    const sw=document.createElement('div'); sw.className='legend-swatch'; sw.style.background=color;
+    item.appendChild(sw);
+    const sp=document.createElement('span'); sp.textContent=text; item.appendChild(sp);
+    l.appendChild(item);
+  });
+  return l;
+}
+
+function makeCap(txt){
+  const d=document.createElement('div'); d.className='vis-caption'; d.textContent=txt; return d;
+}
+
+function buildHint(q){
+  const ha = document.getElementById('harea');
+  ha.innerHTML = '';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'hslabel';
+  lbl.textContent = `Hint — Count all the pieces`;
+  ha.appendChild(lbl);
+
+  // Visual table
+  const visWrap = document.createElement('div'); visWrap.className = 'vis-table';
+  const title = document.createElement('div'); title.className = 'vis-title';
+  title.textContent = `${q.whole} ${q.num}/${q.den} — each whole divided into ${q.den} equal parts`;
+  visWrap.appendChild(title);
+
+  const row = document.createElement('div'); row.className = 'vis-row';
+  const rowLbl = document.createElement('div'); rowLbl.className = 'vis-row-label';
+  rowLbl.textContent = `${q.whole} ${q.num}/${q.den} =`;
+  row.appendChild(rowLbl);
+
+  const ws = document.createElement('div'); ws.className = 'vis-wholes';
+
+  // Full wholes — colA, each fully shaded and partitioned into den pieces
+  for(let i=0; i<q.whole; i++) ws.appendChild(makeWhole(q.den, 'colA'));
+
+  // Extra fractional part — same colA, num pieces shaded out of den
+  ws.appendChild(makeFrac(q.den, q.num, 'colA'));
+
+  row.appendChild(ws);
+  visWrap.appendChild(row);
+  ha.appendChild(visWrap);
+
+  ha.appendChild(makeLeg(
+    ['var(--colA)', `${q.impNum} pieces total, each of size 1/${q.den}`]
+  ));
+
+  ha.appendChild(makeCap(
+    `${q.whole*q.den} + ${q.num} = ${q.impNum} pieces of size 1/${q.den}  →  ${q.impNum}/${q.den}`
+  ));
+
+  ha.classList.add('on');
+  document.getElementById('bhint').disabled = true;
+}
+
+// State
+let Q = null, solved = false;
+
+function newQ(){
+  Q = genQ();
+  solved = false;
+  renderMixedNumber(
+    document.getElementById('qtext'),
+    Q.whole,
+    Q.num,
+    Q.den
+);
+  const numInput = document.getElementById('numInput');
+  const denInput = document.getElementById('denInput');
+
+  numInput.value = '';
+  denInput.value = '';
+
+  numInput.className = 'fraction-box';
+  denInput.className = 'fraction-box';
+
+  numInput.disabled = false;
+  denInput.disabled = false;
+  
+  document.getElementById('fb').textContent = '';
+  document.getElementById('fb').className = 'fb';
+  document.getElementById('bnext').style.display = 'none';
+  document.getElementById('bsub').disabled = false;
+  document.getElementById('bhint').disabled = false;
+  const ha = document.getElementById('harea');
+  ha.innerHTML = ''; ha.classList.remove('on');
+  numInput.focus();
+}
+
+function renderMixedNumber(questionElement, whole, num, den){
+  questionElement.innerHTML = `
+  <math>
+    <mrow>
+      <mn>${whole}</mn>
+      <mfrac>
+        <mn>${num}</mn>
+        <mn>${den}</mn>
+      </mfrac>
+      <mo>=</mo>
+    </mrow>
+  </math>`;
+}
+
+
+function submit(){
+  if(solved) return;
+
+  const numInput = document.getElementById('numInput');
+  const denInput = document.getElementById('denInput');
+  const fb = document.getElementById('fb');
+
+  const numerator = numInput.value.trim();
+  const denominator = denInput.value.trim();
+
+  // Clear previous styling
+  numInput.classList.remove('correct', 'incorrect');
+  denInput.classList.remove('correct', 'incorrect');
+
+  let p = null;
+
+  if(
+    /^\d+$/.test(numerator) &&
+    /^\d+$/.test(denominator)
+  ){
+    p = {
+      n: Number(numerator),
+      d: Number(denominator)
+    };
+  }
+
+  if(!p || p.d === 0){
+    fb.textContent = 'Enter a valid fraction.';
+    fb.className = 'fb err';
+    return;
+  }
+
+  if(matchAns(p, Q)){
+
+    numInput.classList.add('correct');
+    denInput.classList.add('correct');
+
+    fb.textContent = '✓ Correct!';
+    fb.className = 'fb ok';
+
+    numInput.disabled = true;
+    denInput.disabled = true;
+
+    document.getElementById('bsub').disabled = true;
+    document.getElementById('bnext').style.display = 'inline-block';
+
+    solved = true;
+
+  } else {
+
+    numInput.classList.add('incorrect');
+    denInput.classList.add('incorrect');
+
+    fb.textContent =
+      '✗ Not quite — count the total pieces and try again.';
+
+    fb.className = 'fb err';
+  }
+}
+
+document.getElementById('bsub').addEventListener('click', submit);
+['numInput','denInput'].forEach(id=>{
+  document.getElementById(id)
+    .addEventListener('keydown', e=>{
+      if(e.key==='Enter') submit();
+    });
+});
+document.getElementById('bhint').addEventListener('click', ()=> buildHint(Q));
+document.getElementById('bnext').addEventListener('click', newQ);
+newQ();
+</script>
+</body>
+</html>
